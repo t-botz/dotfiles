@@ -47,12 +47,14 @@
       "zoxide"
     ];
     casks = [
+      "bartender"
       "bitwarden"
       "brave-browser"
       "chatgpt"
       "codex"
       "expressvpn"
       "google-chrome"
+      "rectangle"
       "spotify"
       "visual-studio-code"
       "vlc"
