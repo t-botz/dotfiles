@@ -6,7 +6,12 @@
   system.stateVersion = 6;
   system.primaryUser = user;
   users.users.${user}.home = "/Users/${user}";
-  programs.zsh.enable = true;
+  programs.zsh = {
+    enable = true;
+    # Home Manager initializes completion and the Starship prompt.
+    enableCompletion = false;
+    promptInit = "";
+  };
 
   nix-homebrew = {
     enable = true;
