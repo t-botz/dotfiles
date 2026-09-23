@@ -63,8 +63,8 @@
             ;;
           *://*/* )
             host="''${url#*://}"
+            repo_path="''${host#*/}"
             host="''${host%%/*}"
-            repo_path="''${url#*/}"
             ;;
           * )
             echo "Unsupported repository URL: $url" >&2
