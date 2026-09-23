@@ -1,0 +1,17 @@
+[tools]
+"cargo:mistralrs-cli" = "latest"
+go = "latest"
+gradle = "latest"
+java = "25"
+jq = "latest"
+maven = "latest"
+ollama = "latest"
+python = "latest"
+rust = "latest"
+terraform = "latest"
+uv = "latest"
+zellij = "latest"
+
+[settings]
+idiomatic_version_file_enable_tools = ["go", "java"]
+trusted_config_paths = ["~/workspace/github.com/t-botz"]

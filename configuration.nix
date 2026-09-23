@@ -43,6 +43,7 @@
     brews = [
       "gh"
       "herdr"
+      "mise"
       "zoxide"
     ];
     casks = [

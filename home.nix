@@ -33,27 +33,7 @@
   home.file.".claude/CLAUDE.md".source = ./home/AGENTS.md;
   xdg.configFile."opencode/AGENTS.md".source = ./home/AGENTS.md;
 
-  programs.mise = {
-    enable = true;
-    enableZshIntegration = true;
-    globalConfig = {
-      tools = {
-        "cargo:mistralrs-cli" = "latest";
-        go = "latest";
-        gradle = "latest";
-        java = "25";
-        jq = "latest";
-        maven = "latest";
-        ollama = "latest";
-        python = "latest";
-        rust = "latest";
-        terraform = "latest";
-        uv = "latest";
-        zellij = "latest";
-      };
-      settings.idiomatic_version_file_enable_tools = [ "go" "java" ];
-    };
-  };
+  xdg.configFile."mise/config.toml".source = ./home/mise.toml;
 
   programs.zsh = {
     enable = true;
@@ -107,6 +87,7 @@
       }
 
       eval "$(zoxide init zsh)"
+      eval "$(/opt/homebrew/bin/mise activate zsh)"
     '';
   };
 
