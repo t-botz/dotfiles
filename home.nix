@@ -113,6 +113,15 @@
   # Keep the existing global Git config location.
   xdg.configFile."git/config".target = "${config.home.homeDirectory}/.gitconfig";
 
+  home.file.".gitignore".text = ''
+    .envrc
+    .direnv
+    .DS_Store
+    mise.local.toml
+    **/.claude/.cc-writes/
+    **/.claude/settings.local.json
+  '';
+
   programs.git = {
     enable = true;
     settings = {
