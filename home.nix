@@ -59,6 +59,7 @@
     enable = true;
     dotDir = config.home.homeDirectory;
     defaultKeymap = "emacs";
+    shellAliases.ll = "ls -al";
     history = {
       size = 2000;
       save = 2000;
@@ -68,6 +69,10 @@
       eval "$(/opt/homebrew/bin/brew shellenv)"
     '';
     initContent = ''
+      ff() {
+        find ~+ -iname "*$1*"
+      }
+
       gclone() {
         if [ "$#" -ne 1 ]; then
           echo "Usage: gclone git@host:owner/repo.git" >&2
