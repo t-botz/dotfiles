@@ -11,23 +11,8 @@
   fonts.fontconfig.enable = true;
 
   xdg.configFile."wezterm/wezterm.lua".source = ./home/wezterm.lua;
-  xdg.configFile."herdr/config.toml".source = (pkgs.formats.toml { }).generate "herdr-config" {
-    keys = {
-      prefix = "ctrl+b";
-      focus_pane_left = "prefix+h";
-      focus_pane_down = "prefix+j";
-      focus_pane_up = "prefix+k";
-      focus_pane_right = "prefix+l";
-      split_horizontal = "prefix+double_quote";
-      split_vertical = "prefix+percent";
-      new_tab = "prefix+c";
-      close_tab = "prefix+ampersand";
-      workspace_picker = "prefix+w";
-      goto = "prefix+g";
-      copy_mode = "prefix+y";
-    };
-    ui.agent_panel_sort = "spaces";
-  };
+  xdg.configFile."herdr/config.toml".source = config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/workspace/github.com/t-botz/dotfiles/home/herdr.toml";
 
   home.file.".codex/AGENTS.md".source = ./home/AGENTS.md;
   home.file.".claude/CLAUDE.md".source = ./home/AGENTS.md;
