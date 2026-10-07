@@ -22,6 +22,8 @@
       AppleShowAllExtensions = true;
     };
     dock.autohide = true;
+    dock.autohide-delay = 1000.0; # Effectively disable. Can still use ⌘ + ⌥ + D to show / hide dock
+    CustomUserPreferences."com.apple.dock".no-bouncing = true;
     finder.FXPreferredViewStyle = "Nlsv";
     finder.CreateDesktop = false;
     trackpad.Clicking = true;
