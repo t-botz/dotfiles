@@ -3,6 +3,7 @@
   home.username = user;
   home.homeDirectory = "/Users/${user}";
   home.stateVersion = "26.05";
+  manual.manpages.enable = false;
 
   home.packages = with pkgs; [
     ripgrep
