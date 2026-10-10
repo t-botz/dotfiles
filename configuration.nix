@@ -18,7 +18,6 @@
       AppleInterfaceStyle = "Dark";
       KeyRepeat = 2;
       InitialKeyRepeat = 15;
-      _HIHideMenuBar = true;
       AppleShowAllExtensions = true;
     };
     dock.autohide = true;
