@@ -1,8 +1,9 @@
 {
-  description = "Tibo's macOS setup";
+  description = "Shared macOS and WSL setup";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-26.05-darwin";
+    nixpkgs-linux.url = "github:NixOS/nixpkgs/nixos-26.05";
     nix-darwin.url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager/release-26.05";
@@ -10,8 +11,13 @@
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
   };
 
-  outputs = { nix-darwin, home-manager, nix-homebrew, ... }:
+  outputs = { nixpkgs-linux, nix-darwin, home-manager, nix-homebrew, ... }:
     let user = "tibo"; in {
+      homeConfigurations.wsl = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs-linux { system = builtins.currentSystem; };
+        extraSpecialArgs = { user = builtins.getEnv "USER"; };
+        modules = [ ./home.nix ./wsl.nix ];
+      };
       darwinConfigurations.mac = nix-darwin.lib.darwinSystem {
         specialArgs = { inherit user; };
         modules = [

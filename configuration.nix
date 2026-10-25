@@ -42,10 +42,7 @@
       upgrade = false;
     };
     brews = [
-      "gh"
       "herdr"
-      "mise"
-      "zoxide"
     ];
     casks = [
       "bartender"

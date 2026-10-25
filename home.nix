@@ -1,19 +1,24 @@
-{ config, pkgs, user, ... }:
+{ config, pkgs, lib, user, ... }:
 {
   home.username = user;
-  home.homeDirectory = "/Users/${user}";
+  home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${user}" else "/home/${user}";
   home.stateVersion = "26.05";
   manual.manpages.enable = false;
 
   home.packages = with pkgs; [
+    gh
+    mise
+    zoxide
     ripgrep
     nerd-fonts.fira-code
   ];
   fonts.fontconfig.enable = true;
 
-  xdg.configFile."wezterm/wezterm.lua".source = ./home/wezterm.lua;
-  xdg.configFile."herdr/config.toml".source = config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/workspace/github.com/t-botz/dotfiles/home/herdr.toml";
+  xdg.configFile."wezterm/wezterm.lua" = lib.mkIf pkgs.stdenv.isDarwin { source = ./home/wezterm.lua; };
+  xdg.configFile."herdr/config.toml" = lib.mkIf pkgs.stdenv.isDarwin {
+    source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/workspace/github.com/t-botz/dotfiles/home/herdr.toml";
+  };
 
   home.file.".codex/AGENTS.md".source = ./home/AGENTS.md;
   home.file.".claude/CLAUDE.md".source = ./home/AGENTS.md;
@@ -31,7 +36,7 @@
       save = 2000;
       share = true;
     };
-    profileExtra = ''
+    profileExtra = lib.optionalString pkgs.stdenv.isDarwin ''
       eval "$(/opt/homebrew/bin/brew shellenv)"
     '';
     initContent = ''
@@ -73,7 +78,7 @@
       }
 
       eval "$(zoxide init zsh)"
-      eval "$(/opt/homebrew/bin/mise activate zsh)"
+      eval "$(mise activate zsh)"
     '';
   };
 

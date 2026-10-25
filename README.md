@@ -1,10 +1,28 @@
 # Dotfiles
 
-Tibo's dotfiles.
+My system config.
+
+## Setup
+
+macOS:
 
 ```sh
-./bootstrap.sh  # install Determinate Nix, build, and activate (requires sudo)
-./rebuild.sh    # apply subsequent edits
+curl -fsSL https://raw.githubusercontent.com/t-botz/dotfiles/main/install.sh -o /tmp/dotfiles-install.sh
+bash /tmp/dotfiles-install.sh
 ```
 
-To update Nix dependencies, run `nix flake update` and then `./rebuild.sh`.
+From an existing checkout, run `bash bootstrap.sh`.
+
+## Everyday commands
+
+```sh
+bash rebuild.sh                           # apply configuration
+nix flake update && bash rebuild.sh         # update Nix dependencies
+mise upgrade                              # update installed runtimes
+```
+
+## Test
+
+```powershell
+pwsh -NoProfile -File .\tests\test-wsl.ps1
+```
