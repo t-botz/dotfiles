@@ -3,6 +3,11 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
 config.color_scheme = "rose-pine-moon"
+-- Rose pine theme has not enough contrast for me
+config.colors = {
+	selection_bg = "#c4a7e7",
+	selection_fg = "#232136",
+}
 config.font = wezterm.font("FiraCode Nerd Font")
 config.font_size = 15.0
 config.window_background_opacity = 0.8
