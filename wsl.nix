@@ -5,5 +5,12 @@
   targets.genericLinux.gpu.enable = false;
   programs.home-manager.enable = true;
   programs.bash.enable = true;
-  home.packages = [ pkgs.vim ];
+  home.packages = with pkgs; [
+    vim
+    gcc
+    gnumake
+    cmake
+    pkg-config
+    openssl.dev
+  ];
 }

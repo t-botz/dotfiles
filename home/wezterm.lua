@@ -11,7 +11,12 @@ config.colors = {
 config.font = wezterm.font("FiraCode Nerd Font")
 config.font_size = 15.0
 config.window_background_opacity = 0.8
-config.macos_window_background_blur = 50
+if wezterm.target_triple:find("darwin") then
+  config.macos_window_background_blur = 50
+elseif wezterm.target_triple:find("windows") then
+  config.default_prog = { "pwsh.exe", "-NoLogo" }
+  config.font_dirs = { os.getenv("LOCALAPPDATA") .. "/Microsoft/Windows/Fonts" }
+end
 config.hide_tab_bar_if_only_one_tab = true
 config.window_decorations = "RESIZE"
 

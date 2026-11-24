@@ -7,9 +7,10 @@
 
 ## Documentation and style
 
+- Write shell scripts with clear control flow, blank lines between logical steps and short comments where intent is not obvious.
 - Keep README.md lean: a high-level overview and basic commands, comfortably under 100 lines. Avoid implementation details, test transcripts, and information that needs frequent edits.
 
 ## Validation
 
 - Use the local WSL harness in tests/test-wsl.ps1 for bootstrap behavior changes; use a disposable Tart VM for macOS activation.
-- Full Windows validation should start from a clean Windows VM and cover host setup, WSL provisioning, and guest configuration end to end. The WSL harness covers only the guest portion.
+- Test Windows setup in a clean Windows VM and Linux configuration in disposable WSL distributions. Validate their integration on the real host; this does not prove clean-machine provisioning end to end.

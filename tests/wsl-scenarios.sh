@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Keep the disposable guest within this laptop's memory budget.
+export MISE_JOBS=2
+export CARGO_BUILD_JOBS=2
+
 [[ "$(id -un)" == tester ]]
 [[ ! -d /nix ]]
 if command -v git; then
@@ -28,10 +32,15 @@ test -s /tmp/install.sh
 export DOTFILES_REPO_URL=http://127.0.0.1:8765/fixture/.git
 export DOTFILES_DIR="$HOME/workspace/dotfiles"
 export DOTFILES_REF=main
+result="${XDG_CACHE_HOME:-$HOME/.cache}/dotfiles/result"
 mkdir -p "$HOME/.config"
 printf 'original zsh config\n' > "$HOME/.zshrc"
 bash /tmp/install.sh
 echo 'PASS fresh-install'
+
+# Source builds can succeed with essential Python modules missing.
+"$HOME/.nix-profile/bin/mise" exec -- python -c 'import bz2, lzma, sqlite3, ssl, venv'
+echo 'PASS complete-python-runtime'
 
 . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 # Home Manager's generated session script expects ordinary shell semantics.
@@ -55,7 +64,7 @@ echo 'PASS conflict-backup'
 printf '\n# local test edit\n' >> "$DOTFILES_DIR/home.nix"
 printf 'keep me\n' > "$DOTFILES_DIR/local-note"
 bash /tmp/install.sh
-first="$(readlink "$DOTFILES_DIR/result")"
+first="$(readlink "$result")"
 grep -q '# local test edit' "$DOTFILES_DIR/home.nix"
 [[ "$(cat "$DOTFILES_DIR/local-note")" == 'keep me' ]]
 echo 'PASS rerun-preserves-local-edits'
@@ -79,7 +88,7 @@ echo 'PASS failed-clone-recovery'
 
 mkdir "$HOME/tiny-project"
 cd "$HOME/tiny-project"
-# Exercise one runtime without installing all globally declared AI toolchains.
+# Exercise an installed runtime in a small project.
 # Go uses official Go downloads/checksums, independent of GitHub's API quota.
 printf '%s\n' \
   'package main' \
@@ -91,6 +100,6 @@ echo 'PASS runtime-project'
 
 # Repeat activation with unchanged source and verify the generation output.
 bash "$DOTFILES_DIR/rebuild.sh"
-[[ "$(readlink "$DOTFILES_DIR/result")" == "$first" ]]
+[[ "$(readlink "$result")" == "$first" ]]
 echo 'PASS unchanged-build-output'
 echo 'ALL SCENARIOS PASSED'

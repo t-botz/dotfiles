@@ -13,5 +13,7 @@ uv = "latest"
 zellij = "latest"
 
 [settings]
+# Use the newest complete binary build while upstream publishes new releases.
+python.compile = false
 idiomatic_version_file_enable_tools = ["go", "java"]
 trusted_config_paths = ["~/workspace/github.com/t-botz"]
