@@ -1,5 +1,4 @@
 [tools]
-"cargo:mistralrs-cli" = "latest"
 go = "latest"
 gradle = "latest"
 java = "25"

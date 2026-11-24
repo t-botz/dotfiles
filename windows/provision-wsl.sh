@@ -5,7 +5,7 @@ user="$1"
 export DEBIAN_FRONTEND=noninteractive
 
 apt-get update
-apt-get install -y --no-install-recommends ca-certificates curl python3 sudo xz-utils
+apt-get install -y --no-install-recommends ca-certificates curl sudo xz-utils
 
 if ! id "$user" >/dev/null 2>&1; then
   useradd -m -s /bin/bash "$user"
@@ -13,32 +13,34 @@ if ! id "$user" >/dev/null 2>&1; then
   touch "/home/$user/.dotfiles-needs-password"
 fi
 
-python3 - "$user" <<'PY'
-import configparser
-import io
-from pathlib import Path
-import sys
-import uuid
+config="$(realpath /etc/wsl.conf)"
+updated="$(mktemp "${config}.XXXXXX")"
+trap 'rm -f -- "$updated"' EXIT
 
-path = Path("/etc/wsl.conf")
-before = path.read_text() if path.exists() else ""
-config = configparser.ConfigParser(interpolation=None)
-config.read_string(before)
+cat >"$updated" <<CONF
+[boot]
+systemd=true
 
-changed = False
-for section, key, value in [("boot", "systemd", "true"), ("user", "default", sys.argv[1])]:
-    if config.get(section, key, fallback=None) != value:
-        if not config.has_section(section):
-            config.add_section(section)
-        config.set(section, key, value)
-        changed = True
+[user]
+default=$user
+CONF
 
-if changed:
-    if path.exists():
-        backup = path.with_name(path.name + ".before-dotfiles-" + uuid.uuid4().hex)
-        backup.write_text(before)
-    output = io.StringIO()
-    config.write(output)
-    path.write_text(output.getvalue())
-    sys.exit(10)
-PY
+if [[ -e "$config" ]]; then
+  status=0
+  cmp -- "$config" "$updated" >/dev/null || status=$?
+  case "$status" in
+    0) exit 0 ;;
+    1) ;;
+    *) exit "$status" ;;
+  esac
+
+  backup="$(mktemp /etc/wsl.conf.before-dotfiles-XXXXXXXX)"
+  cp -p -- "$config" "$backup"
+  chown --reference="$config" "$updated"
+  chmod --reference="$config" "$updated"
+else
+  chmod 0644 "$updated"
+fi
+
+mv -fT -- "$updated" "$config"
+exit 10

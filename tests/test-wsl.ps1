@@ -57,6 +57,7 @@ CONF
     RootScript @'
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
+# Python serves the HTTP fixture used by tests/wsl-scenarios.sh.
 apt-get install -y --no-install-recommends ca-certificates curl sudo python3 xz-utils
 id tester >/dev/null 2>&1 || useradd -m -s /bin/bash tester
 echo 'tester ALL=(ALL) NOPASSWD:ALL' >/etc/sudoers.d/dotfiles-tester
@@ -100,16 +101,26 @@ provision=/tmp/payload/fixture/windows/provision-wsl.sh
 run_provision() {
   status=0
   bash "$provision" "$1" || status=$?
-  [[ "$status" == 0 || "$status" == 10 ]]
+  [[ "$status" == "$2" ]]
 }
-run_provision bootstrap-fixture
+# Restore the harness's isolation settings before the guest restarts.
+cp -p /etc/wsl.conf /tmp/wsl.conf.before-provision
+trap 'cp -p /tmp/wsl.conf.before-provision /etc/wsl.conf' EXIT
+
+run_provision bootstrap-fixture 10
 id -nG bootstrap-fixture | grep -qw sudo
 test -f /home/bootstrap-fixture/.dotfiles-needs-password
-run_provision tester
-before="$(sha256sum /etc/wsl.conf)"
-run_provision tester
-test "$(sha256sum /etc/wsl.conf)" = "$before"
-grep -Eq "enabled ?= ?false" /etc/wsl.conf
+run_provision bootstrap-fixture 0
+cmp /etc/wsl.conf - <<'CONF'
+[boot]
+systemd=true
+
+[user]
+default=bootstrap-fixture
+CONF
+backups=(/etc/wsl.conf.before-dotfiles-*)
+test "${#backups[@]}" -eq 1
+cmp /tmp/wsl.conf.before-provision "${backups[0]}"
 echo "PASS windows-linux-account-provisioning"
 '@
   Wsl -d $name -u tester -- timeout 2h bash /tmp/payload/fixture/tests/wsl-scenarios.sh

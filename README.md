@@ -21,6 +21,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$env:TEMP\dotfiles-install.
 ```
 
 From an existing checkout, run `powershell -ExecutionPolicy Bypass -File bootstrap.ps1`.
+Bootstrap manages the configured distribution's `/etc/wsl.conf` and backs up the previous file when replacing it.
 
 ## Everyday commands
 
